@@ -11,5 +11,10 @@ if __name__ == '__main__':
     deck.data = filehelper.createDeck()
     deck.shuffle()
     print deck
-    print deck.draw()
+    card = deck.draw()
+    print card
     print deck
+    card.hide()
+    print card
+    card.hide(False)
+    print card
