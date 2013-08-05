@@ -5,19 +5,20 @@ Created on 4 aout 2013
 '''
 from UserDict import UserDict
 
-class BasicCard(UserDict):
+class Card(UserDict):
     '''
-    Represent a card
+    Represent a card with
     '''
     hidden=False
 
-    def __init__(self, value=0, name=None, hidden=False):
+    def __init__(self, value=0, name=None, description=None, hidden=False):
         '''
         Create a new card
         '''
         UserDict.__init__(self)
         self["name"] = name
         self["value"] = value
+        self["description"] = description
         self.hidden = hidden 
         
 
@@ -29,3 +30,7 @@ class BasicCard(UserDict):
     
     def hide(self, hidden=True):
         self.hidden = hidden
+        
+    def show(self):
+        return UserDict.__repr__(self)
+    

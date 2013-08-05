@@ -4,11 +4,17 @@ Created on 20 juil. 2013
 @author: ju
 '''
 from pycards.deck import Deck
-from pycards.helpers import filehelper
+import ConfigParser
+import importlib
+
+config = ConfigParser.RawConfigParser()
 
 if __name__ == '__main__':
+    config.read("pycards.cfg")
+    loaderName=config.get("Modules", "deck.loader")
+    loader=importlib.import_module(loaderName)
     deck = Deck()
-    deck.data = filehelper.createDeck()
+    deck.data = loader.createDeck(config.get("Files","deck.filename"))
     deck.shuffle()
     print deck
     card = deck.draw()

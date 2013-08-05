@@ -5,9 +5,6 @@ Syntax TBD
 @author: ju
 '''
 from pycards import card
-import re
-
-regexp = re.compile("(\d+) (\w+)")
 
 def createDeck(filename="deck.dat"):
     '''Check if the file exist and launch the parsing'''
@@ -15,7 +12,8 @@ def createDeck(filename="deck.dat"):
     try:
         myFile = open(filename, "r")
         lines = myFile.readlines()
-        cardList = [ __parse(line) for line in lines ]
+        attributes = lines.pop(0).split()
+        cardList = [ __parse(line, attributes) for line in lines ]
         print cardList
         return cardList
     except IOError, e:
@@ -24,9 +22,11 @@ def createDeck(filename="deck.dat"):
         if myFile:
             myFile.close()
 
-def __parse(line):
+def __parse(line, attributes):
     '''Create a card deck and return it'''
-    lineTuple = regexp.search(line).groups()
-    return card.BasicCard(lineTuple[0], lineTuple[1])
+    aTuple = line.split()
+    aCard = card.Card()
+    aCard.data = dict(zip(attributes, aTuple))
+    return aCard
     
         

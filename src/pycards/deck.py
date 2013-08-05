@@ -26,10 +26,10 @@ class Deck(UserList):
         '''
         random.shuffle(self.data)
         
-    def draw(self):
+    def draw(self, number=1):
         '''
         Draw a card in the deck
         '''
-        return self.data.pop()
+        return [ self.data.pop() for i in range(number)]
     
     
