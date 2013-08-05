@@ -8,7 +8,8 @@ from UserDict import UserDict
 
 class Player(UserDict):
     '''
-    Represent a player
+    Represent a player.
+    A player has a name, an hand and zero or more attributes
     '''
     name = None
     hand = None

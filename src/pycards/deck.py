@@ -33,10 +33,18 @@ class Deck(UserList):
         return [ self.data.pop() for i in xrange(number)]
     
     def addCard(self, card, hidden=True, index=1):
+        '''
+        Add a card in the deck to the given index
+        Its visibility can be changed (default : hidden)
+        '''
         card.hide(hidden)
         self.data.insert(index-1, card)
         
     def showCard(self, hidden=True, index=1):
+        '''
+        Show the card at the given index
+        Its visibility can be changed (default : hidden)
+        '''
         card = self.data.__getitem__(index-1)
         print card.show()
         card.hide(hidden)

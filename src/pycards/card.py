@@ -7,7 +7,8 @@ from UserDict import UserDict
 
 class Card(UserDict):
     '''
-    Represent a card with
+    Represent a card
+    A card has the default attributes : name, value and description
     '''
     hidden=False
 
@@ -23,14 +24,24 @@ class Card(UserDict):
         
 
     def __repr__(self):
+        '''
+        if the card is hidden, return "A card"
+        otherwise return the true representation of the card
+        '''
         if self.hidden:
             return "A Card"
         else:
             return UserDict.__repr__(self)
     
     def hide(self, hidden=True):
+        '''
+        Change the visibility of the card
+        '''
         self.hidden = hidden
         
     def show(self):
+        '''
+        Show the card even if the visibility is set to hidden
+        '''
         return UserDict.__repr__(self)
     
