@@ -6,21 +6,29 @@ Created on 20 juil. 2013
 from pycards.deck import Deck
 import ConfigParser
 import importlib
+from pycards.player import Player
 
 config = ConfigParser.RawConfigParser()
 
-if __name__ == '__main__':
-    config.read("pycards.cfg")
+def createDeck():
     loaderName=config.get("Modules", "deck.loader")
     loader=importlib.import_module(loaderName)
     deck = Deck()
     deck.data = loader.createDeck(config.get("Files","deck.filename"))
     deck.shuffle()
-    print deck
-    card = deck.draw()
-    print card
-    print deck
-    card.hide()
-    print card
-    card.hide(False)
-    print card
+    return deck
+
+def createPlayers():
+    players=list()
+    for (k,v) in config.items("Players"):
+        players.append(Player(v))
+    return players
+
+if __name__ == '__main__':
+    config.read("pycards.cfg")
+
+    deck = createDeck()
+    graveyard = Deck(name="Graveyard")
+    
+    players = createPlayers()
+    print players

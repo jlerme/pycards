@@ -30,6 +30,14 @@ class Deck(UserList):
         '''
         Draw a card in the deck
         '''
-        return [ self.data.pop() for i in range(number)]
+        return [ self.data.pop() for i in xrange(number)]
     
-    
+    def addCard(self, card, hidden=True, index=1):
+        card.hide(hidden)
+        self.data.insert(index-1, card)
+        
+    def showCard(self, hidden=True, index=1):
+        card = self.data.__getitem__(index-1)
+        print card.show()
+        card.hide(hidden)
+        
