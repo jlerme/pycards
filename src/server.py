@@ -7,6 +7,7 @@ from pycards.deck import Deck
 import ConfigParser
 import importlib
 from pycards.player import Player
+from cmd import Cmd
 
 config = ConfigParser.RawConfigParser()
 
@@ -24,6 +25,11 @@ def createPlayers():
         players.append(Player(v))
     return players
 
+class CmdInterpreter(Cmd):
+    
+    def do_hello(self, line):
+        print "Hello"
+
 if __name__ == '__main__':
     config.read("pycards.cfg")
 
@@ -31,4 +37,6 @@ if __name__ == '__main__':
     graveyard = Deck(name="Graveyard")
     
     players = createPlayers()
-    print players
+    
+    CmdInterpreter().cmdloop()
+    

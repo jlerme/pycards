@@ -12,21 +12,21 @@ class Player(UserDict):
     A player has a name, an hand and zero or more attributes
     '''
     name = None
-    hand = None
 
     def __init__(self, name="John Doe", attributes=None):
         '''
         Create a new player
         '''
+        UserDict.__init__(self)
         self.name = name
-        self.hand = Deck(name="Hand of " + name)
-        self.data = attributes
+        self.update(attributes)
+        self["hand"] = Deck(name="Hand of " + name)
         
     def __repr__(self):
         return self.name
     
     def getHand(self):
-        return self.hand
+        return self["hand"]
         
     def getAttributes(self, attributes=None):
         if attributes:
@@ -35,4 +35,4 @@ class Player(UserDict):
             return self.data
     
     def playCard(self,index):
-        return self.hand.pop(index)
+        return self["hand"].pop(index)
