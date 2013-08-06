@@ -25,14 +25,14 @@ class Player(UserDict):
     def __repr__(self):
         return self.name
     
-    def showHand(self):
-        print self.hand
+    def getHand(self):
+        return self.hand
         
-    def showAttributes(self, attributes=None):
+    def getAttributes(self, attributes=None):
         if attributes:
-            print dict(zip(attributes,map(lambda x : self.data[x], attributes)))
+            return dict(zip(attributes,map(lambda x : self.data[x], attributes)))
         else:
-            print self.data
+            return self.data
     
     def playCard(self,index):
         return self.hand.pop(index)

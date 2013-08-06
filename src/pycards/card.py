@@ -39,7 +39,7 @@ class Card(UserDict):
         '''
         self.hidden = hidden
         
-    def show(self):
+    def get(self):
         '''
         Show the card even if the visibility is set to hidden
         '''

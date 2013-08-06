@@ -14,7 +14,6 @@ def createDeck(filename="deck.dat"):
         lines = myFile.readlines()
         attributes = lines.pop(0).split()
         cardList = [ __parse(line, attributes) for line in lines ]
-        print cardList
         return cardList
     except IOError, e:
         print e

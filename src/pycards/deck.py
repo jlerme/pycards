@@ -12,13 +12,13 @@ class Deck(UserList):
     '''
     name = ""
 
-    def __init__(self, name="Default"):
+    def __init__(self, name="Default deck"):
         '''
         Create a deck
         '''
         UserList.__init__(self)
         self.name = name
-        print "Create %s deck" % name
+        print "Create %s" % name
         
     def shuffle(self):
         '''
@@ -40,12 +40,11 @@ class Deck(UserList):
         card.hide(hidden)
         self.data.insert(index-1, card)
         
-    def showCard(self, hidden=True, index=1):
+    def getCard(self, index=1):
         '''
         Show the card at the given index
         Its visibility can be changed (default : hidden)
         '''
         card = self.data.__getitem__(index-1)
-        print card.show()
-        card.hide(hidden)
+        return card.get()
         
