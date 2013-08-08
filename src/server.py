@@ -7,7 +7,8 @@ from pycards.deck import Deck
 import ConfigParser
 import importlib
 from pycards.player import Player
-from cmd import Cmd
+from pycards.commandline import AdminCmd
+from pycards.thread import RegisterThread, ChatThread
 
 config = ConfigParser.RawConfigParser()
 
@@ -25,18 +26,15 @@ def createPlayers():
         players.append(Player(v))
     return players
 
-class CmdInterpreter(Cmd):
-    
-    def do_hello(self, line):
-        print "Hello"
-
 if __name__ == '__main__':
     config.read("pycards.cfg")
 
     deck = createDeck()
     graveyard = Deck(name="Graveyard")
     
+    registerThread = RegisterThread()
+    chatThread = ChatThread()
     players = createPlayers()
     
-    CmdInterpreter().cmdloop()
+    AdminCmd().cmdloop()
     
