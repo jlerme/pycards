@@ -8,7 +8,7 @@ import ConfigParser
 import importlib
 from pycards.player import Player
 from pycards.commandline import AdminCmd
-from pycards.thread import RegisterThread, ChatThread
+from pycards.server.thread import RegisterThread, ChatThread, GameThread
 
 config = ConfigParser.RawConfigParser()
 
@@ -34,7 +34,6 @@ if __name__ == '__main__':
     
     registerThread = RegisterThread()
     chatThread = ChatThread()
-    players = createPlayers()
     
     AdminCmd().cmdloop()
     
