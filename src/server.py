@@ -7,33 +7,42 @@ from pycards.deck import Deck
 import ConfigParser
 import importlib
 from pycards.player import Player
-from pycards.commandline import AdminCmd
-from pycards.server.thread import RegisterThread, ChatThread, GameThread
+from pycards.server.thread import ChatThread, GameThread, AdminThread
+import Pyro4
 
-config = ConfigParser.RawConfigParser()
 
-def createDeck():
-    loaderName=config.get("Modules", "deck.loader")
-    loader=importlib.import_module(loaderName)
-    deck = Deck()
-    deck.data = loader.createDeck(config.get("Files","deck.filename"))
-    deck.shuffle()
-    return deck
+class Server(object):
+    
+    daemon=Pyro4.Daemon()
+    config = ConfigParser.RawConfigParser()
 
-def createPlayers():
-    players=list()
-    for (k,v) in config.items("Players"):
-        players.append(Player(v))
-    return players
+    def __init__(self):
+        self.config.read("pycards.cfg")
+ 
+        ns=Pyro4.locateNS()
+        uri=self.daemon.register(self)
+        ns.register("pycards.server", uri)
+        
+    def __createDeck(self):
+        loaderName=self.config.get("Modules", "deck.loader")
+        loader=importlib.import_module(loaderName)
+        deck = Deck()
+        deck.data = loader.createDeck(self.config.get("Files","deck.filename"))
+        deck.shuffle()
+        return deck
+    
+    def start(self):
+        self.deck = self.__createDeck()
+        self.graveyard = Deck(name="Graveyard")
+    
+        self.chatThread = ChatThread()
+        self.commandline = AdminThread()
+        
+        self.commandline.start()
+        self.daemon.requestLoop()
+        
+    def register(self, name):
+        print "TBD : Create player " + name
 
 if __name__ == '__main__':
-    config.read("pycards.cfg")
-
-    deck = createDeck()
-    graveyard = Deck(name="Graveyard")
-    
-    registerThread = RegisterThread()
-    chatThread = ChatThread()
-    
-    AdminCmd().cmdloop()
-    
+    Server().start()
