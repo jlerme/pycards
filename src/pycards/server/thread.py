@@ -4,6 +4,7 @@ Created on 8 aout 2013
 @author: ju
 '''
 from threading import Thread
+import logging
 from pycards.commandline import AdminCmd
         
 class GameThread(Thread):
@@ -17,7 +18,7 @@ class GameThread(Thread):
         Constructor
         '''
         Thread.__init__(self, name = self.__class__.__name__)
-        print "Thread " + str(self.__class__.__name__) + " created"
+        logging.info( "Thread " + str(self.__class__.__name__) + " created")
 
 class ChatThread(Thread):
     '''
@@ -30,20 +31,4 @@ class ChatThread(Thread):
         Constructor
         '''
         Thread.__init__(self, name = self.__class__.__name__)
-        print "Thread " + str(self.__class__.__name__) + " created"
-        
-class AdminThread(Thread):
-    '''
-    classdocs
-    '''
-
-
-    def __init__(self):
-        '''
-        Constructor
-        '''
-        Thread.__init__(self, name = self.__class__.__name__)
-        print "Thread " + str(self.__class__.__name__) + " created"
-
-    def run(self):
-        AdminCmd().cmdloop(self)
+        logging.info("Thread " + str(self.__class__.__name__) + " created")

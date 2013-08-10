@@ -9,11 +9,13 @@ class AdminCmd(Cmd):
     '''
     create a command line interpreter with admin command
     '''
-
-
-    def __init__(self):
+    __server = None
+    def __init__(self, server):
         '''
         Constructor
         '''
         Cmd.__init__(self)
-        
+        self.__server = server
+    
+    def do_players(self, params):
+        print self.__server.players

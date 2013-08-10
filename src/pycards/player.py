@@ -19,6 +19,7 @@ class Player(UserDict):
         '''
         UserDict.__init__(self)
         self.name = name
+        self["waiting"]=True
         self.update(attributes)
         self["hand"] = Deck(name="Hand of " + name)
         
