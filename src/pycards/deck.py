@@ -5,6 +5,7 @@ Created on 4 aout 2013
 '''
 from UserList import UserList
 import random
+import logging
 
 class Deck(UserList):
     '''
@@ -18,7 +19,7 @@ class Deck(UserList):
         '''
         UserList.__init__(self)
         self.name = name
-        print "Create %s" % name
+        logging.info("Creating %s" % name)
         
     def shuffle(self):
         '''
@@ -30,7 +31,7 @@ class Deck(UserList):
         '''
         Draw a card in the deck
         '''
-        return [ self.data.pop() for i in xrange(number)]
+        return [ self.data.pop() for _ in xrange(number)]
     
     def addCard(self, card, hidden=True, index=1):
         '''

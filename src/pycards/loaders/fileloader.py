@@ -29,6 +29,7 @@ def __parse(line, attributes):
     aTuple = line.split()
     aCard = card.Card()
     aCard.data = dict(zip(attributes, aTuple))
+    logging.debug("Creating card " + aCard.__repr__())
     return aCard
     
         

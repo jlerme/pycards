@@ -18,4 +18,13 @@ class AdminCmd(Cmd):
         self.__server = server
     
     def do_players(self, params):
+        '''
+        Return the list of registered players
+        '''
         print self.__server.players
+    
+    def do_start(self, params):
+        '''
+        Start the game
+        '''
+        self.__server.start_game()
