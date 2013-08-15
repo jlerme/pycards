@@ -23,30 +23,22 @@ class Server(object):
     Register players
     Configure and start all Pyro stuff
     '''
-    daemon  = Pyro4.Daemon()
     config  = ConfigParser.RawConfigParser()
     players = {}
-    __nameServer = None
-    __gameThread = None
+    _nameServer = None
+    _gameThread = None
     
     def __init__(self):
         '''
         Constructor
         Load the configuration
         Initialise the logging service
-        Register the server in the Pyro NameServer
         '''
         logging.basicConfig(filename='server.log', filemode="w", level=logging.DEBUG)
         logging.info("Loading the configuration")
-        self.config.read("pycards.cfg")
+        self.config.read("pycards.cfg")      
         
- 
-        logging.info("Registering server in the pyro NameServer")
-        self.__nameServer=Pyro4.locateNS()
-        uri=self.daemon.register(self)
-        self.__nameServer.register("pycards.server", uri)
-        
-    def __createDeck(self):
+    def _createDeck(self):
         '''
         Create initial deck
         Get the loader according to the configuration and load the deck
@@ -69,6 +61,7 @@ class Server(object):
         Start the server
         Start Chat thread
         Start an admin command line thread
+        Register the server in the Pyro NameServer
         Start Pyro daemon
         '''
         logging.info("Starting Chat thread")
@@ -78,12 +71,19 @@ class Server(object):
         adminThread = Thread(target=AdminCmd(self).cmdloop)
         adminThread.start()
         
-        logging.info("Starting Pyro daemon")
-        self.daemon.requestLoop()
+        logging.info("Registering the ServerAdapter in the pyro NameServer")
+        with Pyro4.Daemon() as daemon:
+            self._nameServer=Pyro4.locateNS()
+            uri=daemon.register(ServerAdapter(self))
+            self._nameServer.register("pycards.server", uri)
+            
+            logging.info("Starting Pyro daemon")
+            daemon.requestLoop()
         
     def register(self, name):
         logging.info("Creating player " + name)
         self.players[name] = Player(name)
+        return self.players[name]
     
     def start_game(self):
         '''
@@ -93,16 +93,29 @@ class Server(object):
         logging.info("Creating the decks")
         decks = self.__createDecks()
         
-        self.__gameThread = GameThread(self.players.items(), decks)
-        uri=self.daemon.register(self.__gameThread)
-        self.__nameServer.register("pycards.game", uri)
-        self.__gameThread.start()
-        while True:
-            time.sleep(10)
-            self.__gameThread.play()
+        self._gameThread = GameThread(self.players.items(), decks)
+        uri=self._pyroDaemon.register(self._gameThread)
+        self._nameServer.register("pycards.game", uri)
+        self._gameThread.start()
 
     def stop_game(self):
-        self.__gameThread.stop()
+        self._gameThread.stop()
+
+class ServerAdapter(object):
+    """ Adapter for the server to use in the pyro service """
+    
+    _server = None
+    _exportedMethods = [ "register" ]
+    
+    def __init__(self, server):
+        self._server = server
+        
+    def __getattr__(self, attr):
+        """Everything else is delegated to the object"""
+        if attr in self._exportedMethods:
+            return getattr(self._server, attr)
+        else:
+            raise NotImplementedError
 
 if __name__ == '__main__':
     Server().start()

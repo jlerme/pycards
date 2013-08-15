@@ -10,19 +10,12 @@ import logging
 def createDeck(filename="deck.dat"):
     '''Check if the file exist and launch the parsing'''
     logging.info("Loading " + filename + " file")
-    myFile = None
-    try:
-        myFile = open(filename, "r")
+    
+    with open(filename, "r") as myFile: 
         lines = myFile.readlines()
         attributes = lines.pop(0).split()
         cardList = [ __parse(line, attributes) for line in lines ]
         return cardList
-    except IOError, e:
-        logging.critical(e)
-    finally:
-        if myFile:
-            myFile.close()
-            logging.info(filename + " loaded")
 
 def __parse(line, attributes):
     '''Create a card deck and return it'''
