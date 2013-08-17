@@ -5,55 +5,69 @@ Created on 8 aout 2013
 '''
 import threading
 import logging
+from pycards.deck import Deck
+import pycards.config as configuration
+import importlib
         
 class GameThread(threading.Thread):
     '''
     classdocs
     '''
-    __players = []
-    __decks = {}
-    __lock = threading.Lock()
-    __playerTurn = None
+    _players = []
+    _decks = {}
+    _lock = threading.Lock()
+    _playerTurn = None
 
-    def __init__(self, players, decks):
+    def __init__(self, players):
         '''
         Constructor
         '''
         threading.Thread.__init__(self, name = self.__class__.__name__)
         logging.info( "Thread " + str(self.__class__.__name__) + " created")
-        self.__players = players
-        self.__decks = decks
+        self._players = players
+
+        loaderName=configuration.config.get("Modules", "deck.loader")
+        logging.info("Importing deck loader " + loaderName)
+        loader=importlib.import_module(loaderName)
+
+        deck = Deck()
+        deck.data = loader.createDeck(configuration.config.get("Files","deck.filename"))
+        deck.shuffle()
+        
+        self._decks["Main"] = deck
+        self._decks["Graveyard"] = Deck("Graveyard")
+
 
     def run(self):
         while True:
-            for player in self.__players:
+            for player in self._players:
                 print "Wait for " + player.name + " to play"
-                self.__playerTurn = player
-                self.__lock.acquire()
+                self._playerTurn = player
+                self._lock.acquire()
                 
     def endOfTurn(self):
-        self.__lock.release()
+        self._lock.release()
         
     def draw(self, player, deck="Main", number="1"):
-        cards = self.__decks[deck].draw(number)
+        cards = self._decks[deck].draw(number)
         for card in cards:
-            self.__players[player].getHand().addCard(card)
+            self._players[player].getHand().addCard(card)
         return cards
     
     def discard(self, player, card, deck="Graveyard"):
-        self.__players[player].getHand().remove(card)
-        self.__decks[deck].addCard(card,hidden=False)
+        self._players[player].getHand().remove(card)
+        self._decks[deck].addCard(card,hidden=False)
         
     def play(self, player, card):
         print "Player " + player + " shows " + card.show()
         
     def show(self, player, deck, number=1):
         if number == 0:
-            for card in self.__decks[deck]:
+            for card in self._decks[deck]:
                 card.show()
         else:
             for x in xrange(number):
-                self.__decks[deck].getCard(x).show()
+                self._decks[deck].getCard(x).show()
         
 class ChatThread(threading.Thread):
     '''
