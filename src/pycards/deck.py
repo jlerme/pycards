@@ -13,11 +13,11 @@ class Deck(UserList):
     '''
     name = ""
 
-    def __init__(self, name="Default deck"):
+    def __init__(self, name="Default deck", initlist=None):
         '''
         Create a deck
         '''
-        UserList.__init__(self)
+        UserList.__init__(self, initlist)
         self.name = name
         logging.info("Creating %s" % name)
         
@@ -48,4 +48,8 @@ class Deck(UserList):
         '''
         card = self.data.__getitem__(index-1)
         return card.get()
-        
+    
+    @staticmethod
+    def unserialize(data):
+        logging.debug("unserialize " + str(data))
+        return Deck(data["name"], data["data"])

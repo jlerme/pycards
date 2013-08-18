@@ -5,26 +5,30 @@ Created on 5 aout 2013
 '''
 from pycards.deck import Deck
 from UserDict import UserDict
+import Pyro4
+import logging
 
 class Player(UserDict):
     '''
     Represent a player.
     A player has a name, an hand and zero or more attributes
     '''
-    name = None
 
-    def __init__(self, name="John Doe", attributes=None):
+    def __init__(self, name=None, attributes=None):
         '''
         Create a new player
         '''
         UserDict.__init__(self)
-        self.name = name
-        self["waiting"]=True
-        self.update(attributes)
-        self["hand"] = Deck(name="Hand of " + name)
         
+        if name:
+            self["name"] = name
+            self["waiting"]=True
+            self["hand"] = Deck(name="Hand of " + name)
+ 
+        self.update(attributes)
+    
     def __repr__(self):
-        return self.name
+        return self.data["name"]
     
     def getHand(self):
         return self["hand"]
@@ -37,3 +41,10 @@ class Player(UserDict):
     
     def playCard(self,index):
         return self["hand"].pop(index)
+    
+    @staticmethod
+    def unserialize(data):
+        logging.debug("unserialize " + str(data))
+        data = data["data"]
+        data["hand"] = Deck.unserialize(data["hand"])
+        return Player(attributes=data)

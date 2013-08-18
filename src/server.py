@@ -6,9 +6,10 @@ Created on 20 juil. 2013
 from pycards.player import Player
 from pycards.server.thread import ChatThread, GameThread
 import Pyro4
-import logging
+import logging.config
 from threading import Thread
 from pycards.commandline import AdminCmd
+from pycards.config import LOG_SETTINGS
 
 class Server(object):
     '''
@@ -24,8 +25,12 @@ class Server(object):
         '''
         Constructor
         Nothing to do yet
-       '''
-   
+        '''
+        Pyro4.config.reset()
+        Pyro4.config.SERIALIZER = 'json'
+        Pyro4.util.SerializerBase.register_dict_to_class(Player, Player.unserialize)
+        Thread(target=Pyro4.naming.startNSloop).start()
+    
     def start(self):
         '''
         Start the server
@@ -42,8 +47,6 @@ class Server(object):
         adminThread.start()
         
         logging.info("Registering the ServerAdapter in the pyro NameServer")
-        Pyro4.config.reset()
-        Pyro4.config.SERIALIZER = 'pickle'
         with Pyro4.Daemon() as daemon:
             with Pyro4.locateNS() as nameServer:
                 uri=daemon.register(ServerAdapter(self))
@@ -88,4 +91,5 @@ class ServerAdapter(object):
             raise NotImplementedError
 
 if __name__ == '__main__':
+    logging.config.dictConfig(LOG_SETTINGS)
     Server().start()
